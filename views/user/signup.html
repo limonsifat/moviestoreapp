@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+	    <center><h1>Sign up Screen</h1></center>
+      <div class="text-right"><button type="submit" class=" btn btn-sm btn-primary w-auto mb-2 " onclick="loginPage()">login</button></div>
+	    <hr>
+	    <label for="email"><b>First name</b></label>
+	    <input type="text" placeholder="First name" name="fname" id="fname" required>
+
+	    <label for="psw"><b>Last name</b></label>
+	    <input type="text" placeholder="Last name" name="lname" id="lname" required>
+
+	    <label for="psw-repeat"><b>Email</b></label>
+	    <input type="text" placeholder="Email" name="email" id="email" required>
+
+	    <label for="psw-repeat"><b>Password</b></label>
+	    <input type="password" placeholder="password" name="password" id="password" required>     
+	      <button type="submit" class="signupbtn" onclick="signup()">Sign Up</button>
+    </div>
+</body>
+</html>
+<script>
+function signup(){
+  var email = document.getElementById("email").value;
+  var password = document.getElementById("password").value;
+  var fname = document.getElementById("fname").value;
+  var lname = document.getElementById("lname").value;
+  if(!email || !password || !fname || !lname) return alert("fill all the required fileds");
+
+  var obj={
+    "firstName":fname,
+    "lastName":lname,
+    "email": email,
+    "password": password 
+  };
+  $.ajax({
+    url: "/api/user/signup",
+    method: "POST",
+    data: JSON.stringify(obj),
+    contentType: "application/json",
+    success: function(result,status,jqXHR ){
+      if(result.status == 'OK' && result.message == 'Signup successfully!'){
+        localStorage.setItem('login', true);
+        window.location.replace('/login');
+      } else{
+        alert(result.message);
+      }
+    },
+    error(jqXHR, textStatus, errorThrown){
+      //Do something
+    }
+  }); 
+}
+
+function loginPage(){
+  window.location.replace('/login');
+}
+</script>

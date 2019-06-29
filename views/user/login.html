@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<center><h2>Login Form</h2></center>
+  <div class="imgcontainer">
+    <img src="images/img-signup.png" alt="Avatar" class="avatar">
+  </div>
+
+  <div class="container">
+    <div>
+      <div class="col-md-6 offset-md-3">
+        <label for="uname"><b>Email</b></label>
+        <input type="text" class="form-control" placeholder="Enter email" id="email" name="email" required>
+      </div>
+      <div class="col-md-6 offset-md-3">
+        <label for="psw"><b>Password</b></label>
+        <input type="password" class="form-control" placeholder="Enter Password" id="psw" name="pwd" required>
+      </div>
+      <div class="col-md-6 offset-md-3">
+        <button class="btn btn-success mb-2" type="button" onclick="login()">Login</button>
+        <button class="btn btn-success" type="button" onclick="signupPage()" >Sign Up</button>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+</html>
+<script>
+function login(){
+  var email = document.getElementById("email").value;
+  var password = document.getElementById("psw").value;
+  if(!email || !password ) return alert("fill all the required fileds");
+  var obj={
+    "email": email,
+    "password": password 
+  };
+  $.ajax({
+    url: "/api/user/login",
+    method: "POST",
+    data: JSON.stringify(obj),
+    contentType: "application/json",
+    success: function(result,status,jqXHR ){
+      if(result.status == 'OK' && result.message == 'Login successfully!'){
+        localStorage.setItem('login', true);
+        localStorage.setItem('userDetails', JSON.stringify(result.data));
+        window.location.replace('/movies');
+      } else{
+        alert(result.message);
+      }
+    },
+    error(jqXHR, textStatus, errorThrown){
+      //Do something
+    }
+  }); 
+}
+function signupPage(){
+  window.location.replace('/signup');
+}
+</script>

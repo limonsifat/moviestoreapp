@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Category</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <style type="text/css">
+    .pag-wrapper {
+        display: flex;
+        min-height: 100vh;
+        display: -webkit-flex;
+    }
+    .main-content{
+      width: 100%;
+      margin-left: 260px;
+      padding: 1rem;
+    }
+    .sidebar {
+        width: 260px;
+        position: fixed;
+        height: 100%;
+        background: #404040;
+        color: #fff;
+    }
+    .sideHeader h5 {
+        padding: 0.5rem 1rem 0.5rem;
+        font-size: 1.5rem;
+    }
+    .sidebar hr {
+        margin: 1rem 0;
+        height: 1px;
+        background: #5d5d5d;
+    }
+    .sideItem ul{
+      list-style: none;
+      padding: 0;
+      display: block;
+    }
+    .sideItem li a {
+        padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+        color: #fff;
+        display: block;
+        font-size: 1rem;
+        border-bottom: 1px solid #505050;
+    }
+    .sideItem li a:hover{
+      text-decoration: none;
+      background: #505050;
+      cursor: pointer;  
+    }
+  </style>
+</head>
+<body>
+<div class="pag-wrapper">
+  <div class="sidebar">
+    <div class="sideHeader">
+      <h5 onclick="goToSite()" style="cursor: pointer;">Home</h5>
+    </div>
+    <hr>
+    <div class="sideItem">
+      <ul>
+        <li>
+          <a href="/category" title="">Category</a>
+        </li>
+       
+        <li>
+          <a href="/movies" title="">Movies</a>
+        </li>
+        
+        <li>
+          <a href="/update-profile" title="">Profile</a>
+        </li>
+       
+        <li>
+          <a onclick="signout()" title="">Sign Out</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid main-content">
+    <h2 style="margin: 50px 0;">category</h2>
+    <div class="text-right">
+    <button type="submit" class=" btn btn-sm btn-primary w-auto mb-2 mr-3 " onclick="addCategoryPage()">Add Category</button>
+    </div>            
+    <table class="table table-stripped" id="dataTable">
+    </table>
+  </div>
+</div>
+</body>
+</html>
+
+<script>
+var loginValue = localStorage.getItem('login');
+if(!loginValue){
+  window.location.replace('/login');
+}
+$.ajax({
+  url: "/api/category/getAllCategories",
+  method: "GET",
+  contentType: "application/json",
+  success: function(result){
+    var table = '';
+    table += '<table border="1">';
+    table += '<thead>';
+    table += '<tr>';
+    table += '<th> Category Name </th>';
+    table += '<th> Description </th>';
+    table += '<th> Created at </th>';
+    table += '<th> Edit </th>';
+    table += '<th> Delete </th>';
+    table += '</tr>';
+
+    table += '</thead>';
+    table += '</tbody>';
+
+    result.data.forEach(function(arr){
+      table += '<tr>';
+      table += '<td> '+arr.categoryName+' </td>';
+      table += '<td> '+arr.description+' </td>';
+      table += '<td> '+arr.createdAt+' </td>';
+      table += '<td> <button class="btn" onclick="updateCategory(\'' + arr._id + '\',\'' +arr.categoryName+'\', \'' +arr.description+'\')"><i class="fa fa-edit"></i></button> </td>';
+      table += '<td> <button class="btn" onclick="deleteCategory(\'' + arr._id + '\')"><i class="fa fa-trash"></i></button> </td>';
+      table += '</tr>';
+    })
+
+    table += '</tbody>';
+    table += '</table>'; 
+    document.getElementById('dataTable').innerHTML = table;
+  },
+  error(jqXHR, textStatus, errorThrown){
+    //Do something
+  }
+});
+
+function deleteCategory(id){
+  var obj = {
+    "id": id 
+  };
+  $.ajax({
+    url: "/api/category/deleteCategory",
+    method: "POST",
+    data: JSON.stringify(obj),
+    contentType: "application/json",
+    success: function(result,status,jqXHR){
+      if(result.status == 'OK' && result.message == 'successfully Deleted!'){
+        location.reload();
+      } else{
+        alert(result.message);
+      }
+    },
+    error(jqXHR, textStatus, errorThrown){
+        //Do something
+    }
+  });
+} 
+
+function updateCategory(id,name,des){
+  var obj = {
+    "id": id,
+    "name": name,
+    "description": des
+  }
+  localStorage.setItem('catDetail',JSON.stringify(obj));
+  window.location.replace(window.location.origin+'/category/update-category'); 
+} 
+function signout(){
+  localStorage.clear();
+  window.location.replace('/');
+}
+
+function addCategoryPage(){
+  window.location.replace('/category/add-category');
+}
+
+function goToSite() {
+  window.location.replace('/');
+}
+</script>

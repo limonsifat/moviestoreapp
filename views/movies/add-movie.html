@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Movies</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <style type="text/css">
+    .pag-wrapper {
+        display: flex;
+        min-height: 100vh;
+        display: -webkit-flex;
+    }
+    .main-content{
+      width: 100%;
+      margin-left: 260px;
+      padding: 1rem;
+    }
+    .sidebar {
+        width: 260px;
+        position: fixed;
+        height: 100%;
+        background: #404040;
+        color: #fff;
+    }
+    .sideHeader h5 {
+        padding: 0.5rem 1rem 0.5rem;
+        font-size: 1.5rem;
+    }
+    .sidebar hr {
+        margin: 1rem 0;
+        height: 1px;
+        background: #5d5d5d;
+    }
+    .sideItem ul{
+      list-style: none;
+      padding: 0;
+      display: block;
+    }
+    .sideItem li a {
+        padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+        color: #fff;
+        display: block;
+        font-size: 1rem;
+        border-bottom: 1px solid #505050;
+    }
+    .sideItem li a:hover{
+      text-decoration: none;
+      background: #505050;
+      cursor: pointer;  
+    }
+  </style>
+</head>
+<div class="pag-wrapper">
+  <div class="sidebar">
+    <div class="sideHeader">
+      <h5 onclick="goToSite()" style="cursor: pointer;">Home</h5>
+    </div>
+    <hr>
+    <div class="sideItem">
+      <ul>
+        <li>
+          <a href="/category" title="">Category</a>
+        </li>
+       
+        <li>
+          <a href="/movies" title="">Movies</a>
+        </li>
+        
+        <li>
+          <a href="/update-profile" title="">Profile</a>
+        </li>
+       
+        <li>
+          <a onclick="signout()" title="">Sign Out</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="p-4 main-content">
+      <h2 class="text-center mb-5">Add Movie</h2>
+      <div class="contianer-fluid pt-3">
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <div class="row">
+              <div class="col-md-6 form-group">
+                <label for="name"><b>Choose category</b></label>
+                <select id="dropDownData" class="form-control">
+                </select>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="name"><b>Movie Title</b></label>
+                <input type="text" placeholder="Enter title" name="category-name" id="movietitle" required  class="form-control">
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="description"><b>year</b></label>
+                <input type="text" placeholder="Enter year" name="description" id="movieyear" required class="form-control">
+              </div> 
+              <div class="col-md-6 form-group">
+                <label for="description"><b>director</b></label>
+                <input type="text" placeholder="Enter director name" name="description" id="moviedirector" class="form-control" required>
+              </div>
+              <div class="col-md-6 form-group">
+                <label for="description"><b>Description</b></label>
+                <input type="text" placeholder="Enter description" name="description" id="moviedes" class="form-control" required>
+              </div>
+              <div class="col-md-6 form-group mb-5">
+                <label for="description"><b>photoUrl</b></label>
+                <input type="text" placeholder="Enter photo URL" name="description" id="movieurl" class="form-control" required>
+              </div>
+              <div class="col-md-6 offset-md-3 form-group">
+                <button type="submit" class="btn btn-primary btn-block" onclick="addMovie()">Add Movie</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+</body>
+</html>
+
+<script>
+var loginValue = localStorage.getItem('login');
+  if(!loginValue){
+  window.location.replace('/login');
+  }
+$.ajax({
+    url: "/api/category/getAllCategories",
+    method: "GET",
+    contentType: "application/json",
+    success: function(result){
+    var dropDown = '';
+    dropDown += '<option value="0">Select category</option>';
+    result.data.forEach(function(arr){
+    dropDown += '<option value="'+arr._id+'">'+arr.categoryName+'</option>';
+    }) 
+    document.getElementById('dropDownData').innerHTML = dropDown;
+    },
+     error(jqXHR, textStatus, errorThrown){
+        //Do something
+     }
+  });
+
+
+function addMovie() {
+
+  var e = document.getElementById("dropDownData");
+  var catId = e.options[e.selectedIndex].value;;
+  var title = document.getElementById("movietitle").value;
+  var year = document.getElementById("movieyear").value;
+  var moviedes = document.getElementById("moviedes").value;
+  var moviedirector = document.getElementById("moviedirector").value;
+  var photoUrl = document.getElementById("movieurl").value;
+  if(!title || !year ||!moviedes || !moviedirector || !photoUrl ) return alert("fill all the required fileds");
+	var obj = {
+		"categoryId": catId,	
+    "title": title, 
+    "year": year, 
+    "director": moviedirector, 
+    "description": moviedes, 
+		"photoUrl": photoUrl	
+	}
+	$.ajax({
+    url: "/api/movies/addMovie",
+    method: "POST",
+    data: JSON.stringify(obj),
+    contentType: "application/json",
+    success: function(result,status,jqXHR ){
+      if(result.status == 'OK' && result.message == 'Created successfully!'){
+        alert(result.message);
+        catname = document.getElementById("catname").value = '';
+		  catDescription = document.getElementById("catDescription").value = '';
+      } else{
+        alert(result.message);
+      }
+    },
+     error(jqXHR, textStatus, errorThrown){
+        //Do something
+     }
+  }); 
+}
+function signout(){
+  localStorage.clear();
+  window.location.replace('/');
+}
+
+function goToSite() {
+  window.location.replace('/');
+}
+</script>

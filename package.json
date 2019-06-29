@@ -1,0 +1,28 @@
+{
+  "name": "moviestoreapp",
+  "version": "1.0.0",
+  "description": "a movie store app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/limonsifat/moviestoreapp.git"
+  },
+  "author": "MD Sifat Mahmud, Pamir Biswas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/limonsifat/moviestoreapp/issues"
+  },
+  "homepage": "https://github.com/limonsifat/moviestoreapp#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.4",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2",
+    "mongoose": "^5.6.2"
+  }
+}

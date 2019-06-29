@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Movies</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <style type="text/css">
+    .pag-wrapper {
+        display: flex;
+        min-height: 100vh;
+        display: -webkit-flex;
+    }
+    .main-content{
+      width: 100%;
+      margin-left: 260px;
+      padding: 1rem;
+    }
+    .sidebar {
+        width: 260px;
+        position: fixed;
+        height: 100%;
+        background: #404040;
+        color: #fff;
+    }
+    .sideHeader h5 {
+        padding: 0.5rem 1rem 0.5rem;
+        font-size: 1.5rem;
+    }
+    .sidebar hr {
+        margin: 1rem 0;
+        height: 1px;
+        background: #5d5d5d;
+    }
+    .sideItem ul{
+      list-style: none;
+      padding: 0;
+      display: block;
+    }
+    .sideItem li a {
+        padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+        color: #fff;
+        display: block;
+        font-size: 1rem;
+        border-bottom: 1px solid #505050;
+    }
+    .sideItem li a:hover{
+      text-decoration: none;
+      background: #505050;
+      cursor: pointer;  
+    }
+  </style>
+</head>
+<body>
+
+  <div class="pag-wrapper">
+  <div class="container-fluid">
+    <div class="text-right" style="background: #efefef;width: 100%;padding: 10px;">
+      <button class=" btn btn-sm btn-primary w-auto mb-2 " onclick="loginPage()" id="loginBtn">Log In</button>
+      <button class=" btn btn-sm btn-primary w-auto mb-2 " onclick="signupPage()" id="signupBtn">Signup</button>
+      <button class=" btn btn-sm btn-primary w-auto mb-2 " onclick="account()" id="accountBtn">Account</button>
+      <button class=" btn btn-sm btn-primary w-auto mb-2 " onclick="signout()" id="logoutBtn">Log Out</button>
+    </div>
+    <h2 style="margin: 50px 0;">Movies</h2>
+    <div id="movieslist">
+      
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+<script>
+var loginValue = localStorage.getItem('login');
+if(!loginValue){
+  document.getElementById('logoutBtn').style.visibility = 'hidden';
+  document.getElementById('accountBtn').style.visibility = 'hidden';
+  document.getElementById('loginBtn').style.visibility = 'show';
+  document.getElementById('signupBtn').style.visibility = 'show';
+} else {
+  document.getElementById('logoutBtn').style.visibility = 'show';
+  document.getElementById('accountBtn').style.visibility = 'show';
+  document.getElementById('loginBtn').style.visibility = 'hidden';
+  document.getElementById('signupBtn').style.visibility = 'hidden';
+}
+$.ajax({
+  url: "/api/movies/getMovies",
+  method: "GET",
+  contentType: "application/json",
+  success: function(result){
+
+    var bodyContent = '';
+    result.data.forEach(function(arr){
+
+      bodyContent += '<div style="background: #eae8e8;border-radius: 5px;padding: 8px 8px;display: inline-flex;width: 100%;border-bottom: 2px solid #8e8888;margin-bottom: 5px;"><img src="'+arr.photoUrl+'" style="width: 150px;height: 150px;"><div style="margin-left: 10px;"><p>MOVIE NAME: '+arr.title+'</p><p>YEAR: '+arr.year+'</p><p>DIRECTOR: '+arr.director+'</p><p>DESCRIPTION: '+arr.description+'</p></div></div><br>';
+    })
+    document.getElementById('movieslist').innerHTML = bodyContent;
+  },
+  error(jqXHR, textStatus, errorThrown){
+    //Do something
+  }
+});
+function loginPage(){
+  window.location.replace('/login');
+}
+function signupPage(){
+  window.location.replace('/signup');
+}
+function signout(){
+  localStorage.clear();
+  window.location.replace('/');
+}
+function account() {
+  window.location.replace('/update-profile');
+}
+</script>

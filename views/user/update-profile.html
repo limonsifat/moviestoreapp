@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <style type="text/css">
+    .pag-wrapper {
+        display: flex;
+        min-height: 100vh;
+        display: -webkit-flex;
+    }
+    .main-content{
+      width: 100%;
+      margin-left: 260px;
+      padding: 1rem;
+    }
+    .sidebar {
+        width: 260px;
+        position: fixed;
+        height: 100%;
+        background: #404040;
+        color: #fff;
+    }
+    .sideHeader h5 {
+        padding: 0.5rem 1rem 0.5rem;
+        font-size: 1.5rem;
+    }
+    .sidebar hr {
+        margin: 1rem 0;
+        height: 1px;
+        background: #5d5d5d;
+    }
+    .sideItem ul{
+      list-style: none;
+      padding: 0;
+      display: block;
+    }
+    .sideItem li a {
+        padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+        color: #fff;
+        display: block;
+        font-size: 1rem;
+        border-bottom: 1px solid #505050;
+    }
+    .sideItem li a:hover{
+      text-decoration: none;
+      background: #505050;
+      cursor: pointer;  
+    }
+  </style>
+</head>
+<body>
+  <div class="pag-wrapper">
+  <div class="sidebar">
+    <div class="sideHeader">
+      <h5 onclick="goToSite()" style="cursor: pointer;">Home</h5>
+    </div>
+    <hr>
+    <div class="sideItem">
+      <ul>
+        <li>
+          <a href="/category" title="">Category</a>
+        </li>
+       
+        <li>
+          <a href="/movies" title="">Movies</a>
+        </li>
+        
+        <li>
+          <a href="/update-profile" title="">Profile</a>
+        </li>
+       
+        <li>
+          <a onclick="signout()" title="">Sign Out</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+    <div class="container-fluid main-content">
+	    <center><h1>Change Profile</h1></center> 
+	    <hr>
+	    <label for="email"><b>First name</b></label>
+	    <input type="text" placeholder="First name" name="fname" id="fname" required>
+
+	    <label for="psw"><b>Last name</b></label>
+	    <input type="text" placeholder="Last name" name="lname" id="lname" required>
+
+	    <label for="psw-repeat"><b>Email</b></label>
+	    <input type="text" placeholder="Enter your correct email" name="email" id="email" required>
+
+	    <label for="psw-repeat"><b>Old Password</b></label>
+	    <input type="password" placeholder="Enter old password" name="oldPassword" id="oldpwd" required>
+
+      <label for="psw-repeat"><b>New Password</b></label>
+      <input type="password" placeholder="Enter new password" name="newPassword" id="newpwd" required>
+	    
+      <div class="clearfix">
+	      <button type="submit" class="signupbtn" onclick="changeProfile()">Change Profile</button>
+    	</div>
+    </div>
+  </div>  
+</body>
+</html>
+<script>
+var loginValue = localStorage.getItem('login');
+if(!loginValue){
+  window.location.replace('/login');
+}
+var userDetails = JSON.parse(localStorage.getItem('userDetails'));
+var email = document.getElementById("email").value = userDetails.email;
+var fname = document.getElementById("fname").value = userDetails.firstName;
+var lname = document.getElementById("lname").value = userDetails.lastName;
+
+function changeProfile(){
+  var oldPassword = document.getElementById("oldpwd").value;
+  var newPassword = document.getElementById("newpwd").value;
+  
+  email = document.getElementById("email").value;
+  fname = document.getElementById("fname").value;
+  lname = document.getElementById("lname").value;
+  
+  var obj={
+    "firstName":fname,
+    "lastName":lname,
+    "email": email,
+    "oldPassword": oldPassword, 
+    "newPassword": newPassword
+  };
+  $.ajax({
+    url: "/api/user/updateProfile",
+    method: "POST",
+    data: JSON.stringify(obj),
+    dataType: 'json',
+    contentType: "application/json",
+    success: function(result,status,jqXHR ){
+      if(result.status == 'OK' && result.message == 'Update profile successfully!'){
+        alert(result.message);
+        window.location.replace('/movies');
+      } else{
+        alert(result.message);
+      }
+    },
+    error(jqXHR, textStatus, errorThrown){
+      //Do something
+    }
+  }); 
+}
+function signout(){
+  localStorage.clear();
+  window.location.replace('/');
+}
+
+function goToSite() {
+  window.location.replace('/');
+}
+</script>

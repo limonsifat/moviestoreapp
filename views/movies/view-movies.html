@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Movies</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <style type="text/css">
+    .pag-wrapper {
+        display: flex;
+        min-height: 100vh;
+        display: -webkit-flex;
+    }
+    .main-content{
+      width: 100%;
+      margin-left: 260px;
+      padding: 1rem;
+    }
+    .sidebar {
+        width: 260px;
+        position: fixed;
+        height: 100%;
+        background: #404040;
+        color: #fff;
+    }
+    .sideHeader h5 {
+        padding: 0.5rem 1rem 0.5rem;
+        font-size: 1.5rem;
+    }
+    .sidebar hr {
+        margin: 1rem 0;
+        height: 1px;
+        background: #5d5d5d;
+    }
+    .sideItem ul{
+      list-style: none;
+      padding: 0;
+      display: block;
+    }
+    .sideItem li a {
+        padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+        color: #fff;
+        display: block;
+        font-size: 1rem;
+        border-bottom: 1px solid #505050;
+    }
+    .sideItem li a:hover{
+      text-decoration: none;
+      background: #505050;
+      cursor: pointer;  
+    }
+  </style>
+</head>
+<body>
+  <div class="pag-wrapper">
+  <div class="sidebar">
+    <div class="sideHeader">
+      <h5 onclick="goToSite()" style="cursor: pointer;">Home</h5>
+    </div>
+    <hr>
+    <div class="sideItem">
+      <ul>
+        <li>
+          <a href="/category" title="">Category</a>
+        </li>
+       
+        <li>
+          <a href="/movies" title="">Movies</a>
+        </li>
+        
+        <li>
+          <a href="/update-profile" title="">Profile</a>
+        </li>
+       
+        <li>
+          <a onclick="signout()" title="">Sign Out</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid main-content">
+    <h2 style="margin: 50px 0;">Movies</h2>
+    <div class="text-right">
+    <button type="submit" class=" btn btn-sm btn-primary w-auto mb-2 mr-3 " onclick="addMoviePage()">Add Movies</button>
+    </div>                      
+    <table class="table table-stripped" id="dataTable">
+    </table>
+  </div>
+</div>
+
+</body>
+</html>
+
+<script>
+var loginValue = localStorage.getItem('login');
+if(!loginValue){
+  window.location.replace('/login');
+}
+$.ajax({
+  url: "/api/movies/getMovies",
+  method: "GET",
+  contentType: "application/json",
+  success: function(result){
+    var table = '';
+    table += '<table border="1">';
+    table += '<thead>';
+    table += '<tr>';
+    table += '<th> Name </th>';
+    table += '<th> year </th>';
+    table += '<th> Director </th>';
+    table += '<th> Description </th>';
+    table += '<th> Photo URL </th>';
+    table += '<th> Edit </th>';
+    table += '<th> Delete </th>';
+    table += '</tr>';
+
+    table += '</thead>';
+    table += '</tbody>';
+
+    result.data.forEach(function(arr){
+      table += '<tr>';
+      table += '<td> '+arr.title+' </td>';
+      table += '<td> '+arr.year+' </td>';
+      table += '<td> '+arr.director+' </td>';
+      table += '<td> '+arr.description+' </td>';
+      table += '<td> <img style="width:150px;height:150px;" src="'+arr.photoUrl+'"></td>';
+      table += '<td> <button class="btn" onclick="updateMovie(\'' + arr._id + '\',\'' + arr.categoryId + '\',\'' + arr.title + '\',\'' + arr.year + '\',\'' + arr.director + '\',\'' + arr.description + '\',\'' + arr.photoUrl + '\')"><i class="fa fa-edit"></i></button> </td>';
+      table += '<td> <button class="btn" onclick="deleteMovie(\'' + arr._id + '\')"><i class="fa fa-trash"></i></button> </td>';
+      table += '</tr>';
+    })
+
+    table += '</tbody>';
+    table += '</table>'; 
+    document.getElementById('dataTable').innerHTML = table;
+  },
+  error(jqXHR, textStatus, errorThrown){
+    //Do something
+  }
+});
+
+function deleteMovie(id){
+  var obj = {
+    "id": id 
+  };
+  $.ajax({
+    url: "/api/movies/deleteMovie",
+    method: "POST",
+    data: JSON.stringify(obj),
+    contentType: "application/json",
+    success: function(result,status,jqXHR){
+      if(result.status == 'OK' && result.message == 'successfully Deleted!'){
+        location.reload();
+      }
+    },
+    error(jqXHR, textStatus, errorThrown){
+        //Do something
+      }
+    });
+} 
+
+function updateMovie(id,catId,title,year,director,description,photoUrl){
+  
+  var obj = {
+    "id": id,
+    "categoryId": catId,
+    "title": title,
+    "year": year,
+    "director": director,
+    "description": description,
+    "photoUrl": photoUrl 
+  }
+  localStorage.setItem('movieDetail',JSON.stringify(obj));
+  window.location.replace('/movies/update-movies');
+} 
+
+function signout(){
+  localStorage.clear();
+  window.location.replace('/');
+}
+
+function addMoviePage(){
+  window.location.replace('/movies/add-movies');
+}
+
+function goToSite() {
+  window.location.replace('/');
+}
+</script>
