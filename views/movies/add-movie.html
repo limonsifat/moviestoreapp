@@ -174,9 +174,12 @@ function addMovie() {
     success: function(result,status,jqXHR ){
       if(result.status == 'OK' && result.message == 'Created successfully!'){
         alert(result.message);
+        catId = document.getElementById("catId").value = '';
         title = document.getElementById("title").value = '';
         year = document.getElementById("year").value = '';
         moviedirector = document.getElementById("moviedirector").value = '';
+        moviedes = document.getElementById("moviedes").value = '';
+        photoUrl = document.getElementById("photoUrl").value = '';
         window.location.replace('/movies');
 
       } else{
