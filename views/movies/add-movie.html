@@ -98,11 +98,11 @@
                 <input type="text" placeholder="Enter title" name="category-name" id="movietitle" required  class="form-control">
               </div>
               <div class="col-md-6 form-group">
-                <label for="description"><b>year</b></label>
+                <label for="description"><b>Year</b></label>
                 <input type="text" placeholder="Enter year" name="description" id="movieyear" required class="form-control">
               </div> 
               <div class="col-md-6 form-group">
-                <label for="description"><b>director</b></label>
+                <label for="description"><b>Director</b></label>
                 <input type="text" placeholder="Enter director name" name="description" id="moviedirector" class="form-control" required>
               </div>
               <div class="col-md-6 form-group">
@@ -110,7 +110,7 @@
                 <input type="text" placeholder="Enter description" name="description" id="moviedes" class="form-control" required>
               </div>
               <div class="col-md-6 form-group mb-5">
-                <label for="description"><b>photoUrl</b></label>
+                <label for="description"><b>PhotoUrl</b></label>
                 <input type="text" placeholder="Enter photo URL" name="description" id="movieurl" class="form-control" required>
               </div>
               <div class="col-md-6 offset-md-3 form-group">
@@ -174,8 +174,11 @@ function addMovie() {
     success: function(result,status,jqXHR ){
       if(result.status == 'OK' && result.message == 'Created successfully!'){
         alert(result.message);
-        catname = document.getElementById("catname").value = '';
-		  catDescription = document.getElementById("catDescription").value = '';
+        title = document.getElementById("title").value = '';
+        year = document.getElementById("year").value = '';
+        moviedirector = document.getElementById("moviedirector").value = '';
+        window.location.replace('/movies');
+
       } else{
         alert(result.message);
       }
