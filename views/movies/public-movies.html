@@ -62,7 +62,7 @@
     <div class="text-right" style="background: #efefef;width: 100%;padding: 10px;">
       <button class=" btn btn-sm btn-primary w-auto mb-2 " onclick="loginPage()" id="loginBtn">Log In</button>
       <button class=" btn btn-sm btn-primary w-auto mb-2 " onclick="signupPage()" id="signupBtn">Signup</button>
-      <button class=" btn btn-sm btn-primary w-auto mb-2 " onclick="account()" id="accountBtn">Account</button>
+      <button class=" btn btn-sm btn-primary w-auto mb-2 " onclick="addMovie()" id="accountBtn">Add Movie</button>
       <button class=" btn btn-sm btn-primary w-auto mb-2 " onclick="signout()" id="logoutBtn">Log Out</button>
     </div>
     <h2 style="margin: 50px 0;">Movies</h2>
@@ -102,7 +102,7 @@ $.ajax({
     document.getElementById('movieslist').innerHTML = bodyContent;
   },
   error(jqXHR, textStatus, errorThrown){
-    //Do something
+    
   }
 });
 function loginPage(){
@@ -115,7 +115,7 @@ function signout(){
   localStorage.clear();
   window.location.replace('/');
 }
-function account() {
-  window.location.replace('/update-profile');
+function addMovie() {
+  window.location.replace('/movies/add-movies');
 }
 </script>
